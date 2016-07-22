@@ -7,9 +7,29 @@
     <script src="https://cdn.mxpnl.com/libs/mixpanel-platform/build/mixpanel-platform.v0.latest.min.js"></script>
   </head>
   <body class="mixpanel-platform-body">
-    <h1>Hello, World!</h1>
     <script>
-      // Run queries and display results here
+      var eventName = 'Button clicked';                         // replace with event name of your choice
+      var $dau = MP.api.segment(eventName, 'mp_country_code', { // use segment query on eventName, and segment the data by country
+        from: moment().subtract(30, 'days'),                    // 'from' date should be one month ago
+        to: moment().subtract(1, 'days'),                       // 'to' date should be yesterday; partial data for today impacts DAU more than it does MAU
+        unit: 'day',                                            // we want the number of button clicks for each day of the month
+        type: 'unique'                                          // daily counts should be unique; multiple clicks by the same person in one day should be counted only once
+      });
+
+      $dau.done(function(results) {
+        console.log(results.values());
+      });
+
+      var $mau = MP.api.segment(eventName, 'mp_country_code', { // use segment query on eventName, and segment the data by country
+        from: moment().subtract(30, 'days'),                    // 'from' date should be one month ago
+        to: moment().subtract(1, 'days'),                       // 'to' date should be yesterday; partial data for today impacts DAU more than it does MAU
+        unit: 'month',                                          // we want the number of button clicks that occured over the month
+        type: 'unique'                                          // multiple clicks by the same person during any point in the month should be counted only once
+      });
+
+      $mau.done(function(results) {
+          console.log(results.values());
+      });
     </script>
   </body>
 </html>
